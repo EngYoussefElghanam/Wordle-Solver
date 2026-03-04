@@ -89,7 +89,7 @@ for turn in range(1, 7):  # max 6 turns
         # --- Show Top Suggestions ---
         print("----------- Top Suggestions -----------")
         for i in range(min(10, len(scored_guesses))): ### top ten or less...
-            print(f"{i+1} - {scored_guesses[i]}")
+            print(f"{i+1} - {scored_guesses[i]}  Entropy:{round(score_guess(scored_guesses[i],s),2)}")
 
         ###  User Input store in guess and the pattern store in pattern
         guess = input("Enter your guess:").lower()
