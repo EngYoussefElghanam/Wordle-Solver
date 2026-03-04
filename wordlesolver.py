@@ -1,5 +1,7 @@
 import json
 import math
+from tqdm import tqdm
+
 
 with open('targets_5_letter.json','r') as file:
     answers = json.load(file)
@@ -42,7 +44,7 @@ def score_guess(guess, possible_answers):
     for answer in possible_answers:
         pat = feedback(guess, answer)
         patterns[pat] = patterns.get(pat, 0) + 1
-    # entropy
+
     total = len(possible_answers)
     entropy = 0
     for count in patterns.values():
@@ -54,46 +56,53 @@ def score_guess(guess, possible_answers):
 gss = list(guesses)
 s = list(answers)
 for turn in range(1, 7):  # max 6 turns
-    print(f"\n===== Turn {turn} =====")
-    print("Remaining possible answers:", len(s))
-
-
-### the case if no possible answer remains len(s) == 0 ERROR HE GAVE US WRONG INFO
-
-    if (len(s)==0):
-
-        print("Error ! You Entered Wrong information\n")
+    
+    if len(s) == 1:
+        print(f"Solved on turn {turn}")
+        print(f"The solution is {s[0]}")
         break
-
-
-    if(turn != 1):
-        scored_guesses = sorted(
-            gss,
-            key=lambda g: score_guess(g, s),
-            reverse=True
-        )
     else:
-        scored_guesses = gss ### Already sorted before..
-
-    # --- Show Top Suggestions ---
-    print("----------- Top Suggestions -----------")
-    for i in range(min(10, len(scored_guesses))): ### top ten or less...
-        print(f"{i+1} - {scored_guesses[i]}")
-
-    ###  User Input store in guess and the pattern store in pattern
-    guess = input("Enter your guess:")
-
-    pattern = input("Enter the given pattern:")
+        print(f"\n===== Turn {turn} =====")
+        print("Remaining possible answers:", len(s))
 
 
+    ### the case if no possible answer remains len(s) == 0 ERROR HE GAVE US WRONG INFO
 
-    ### handle the case of ggggg before filtering
-    if(pattern =="ggggg"):
-        print(f"Great!!! You Reached The Correct Answer:{guess}\n")
-        break
+        if (len(s)==0):
+
+            print("Error ! You Entered Wrong information\n")
+            break
+
+        if(turn != 1):
+            scores = {}
+            for g in tqdm(gss, desc="Thinking..."):
+                scores[g] = score_guess(g, s)
+
+            scored_guesses = sorted(
+                gss,
+                key=lambda g: scores[g],
+                reverse=True
+            )
+        else:
+            scored_guesses = gss ### Already sorted before..
+
+        # --- Show Top Suggestions ---
+        print("----------- Top Suggestions -----------")
+        for i in range(min(10, len(scored_guesses))): ### top ten or less...
+            print(f"{i+1} - {scored_guesses[i]}")
+
+        ###  User Input store in guess and the pattern store in pattern
+        guess = input("Enter your guess:")
+
+        pattern = input("Enter the given pattern:")
 
 
-    # --- FILTER POSSIBLE ANSWERS ---
-    s = [word for word in s if feedback(guess, word) == pattern]
 
-    # TODO if only one solution remains
+        # handle the case of ggggg before filtering
+        if(pattern =="ggggg"):
+            print(f"Great!!! You Reached The Correct Answer:{guess}\n")
+            break
+
+
+        # --- FILTER POSSIBLE ANSWERS ---
+        s = [word for word in s if feedback(guess, word) == pattern]
