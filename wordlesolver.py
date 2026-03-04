@@ -7,12 +7,38 @@ with open('targets_5_letter.json','r') as file:
 with open('dictionary_5_letter.json','r') as file2:
     guesses = json.load(file2)
 
+def identify_color(G,A,i):
+    
+    if(G[i]==A[i]):
+        A[i]='0'
+        G[i]=''
+        return 'g'
+    else:
+        for char in range(len(G)):
+            if(char==i):
+                continue
+            elif(G[i]==A[char]):
+                A[char]='0'
+                G[i]=''
+                return 'y'
+    
+    return 'r'
+
+
+
 def feedback(g,a):
-    #TODO write the feedback function
-    pass
+    G=list(g)
+    A=list(a)
+
+    fdbck=""
+    for char in range(len(G)):
+        fdbck+=identify_color(G,A,char)
+
+    return fdbck
+    
 
 def score_guess(guess, possible_answers):
-    patterns = {}
+    patterns = {}                                 
     for answer in possible_answers:
         pat = feedback(guess, answer)
         patterns[pat] = patterns.get(pat, 0) + 1
@@ -31,7 +57,15 @@ for turn in range(1, 7):  # max 6 turns
     print(f"\n===== Turn {turn} =====")
     print("Remaining possible answers:", len(s))
 
-    # TODO handle the case if no possible answer remains len(s) == 0 ERROR HE GAVE US WRONG INFO
+
+### the case if no possible answer remains len(s) == 0 ERROR HE GAVE US WRONG INFO
+
+    if (len(s)==0):
+
+        print("Error ! You Entered Wrong information\n")
+        break
+
+
     if(turn != 1):
         scored_guesses = sorted(
             gss,
@@ -39,17 +73,25 @@ for turn in range(1, 7):  # max 6 turns
             reverse=True
         )
     else:
-        scored_guesses = gss
+        scored_guesses = gss ### Already sorted before..
 
     # --- Show Top Suggestions ---
     print("----------- Top Suggestions -----------")
-    for i in range(min(10, len(scored_guesses))):
+    for i in range(min(10, len(scored_guesses))): ### top ten or less...
         print(f"{i+1} - {scored_guesses[i]}")
 
-    # TODO User Input store in guess and the pattern store in pattern
-    guess = None
-    pattern = None
-    # TODO handle the case of ggggg before filtering
+    ###  User Input store in guess and the pattern store in pattern
+    guess = input("Enter your guess:")
+
+    pattern = input("Enter the given pattern:")
+
+
+
+    ### handle the case of ggggg before filtering
+    if(pattern =="ggggg"):
+        print(f"Great!!! You Reached The Correct Answer:{guess}\n")
+        break
+
 
     # --- FILTER POSSIBLE ANSWERS ---
     s = [word for word in s if feedback(guess, word) == pattern]
