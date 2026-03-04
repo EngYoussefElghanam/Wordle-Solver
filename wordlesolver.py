@@ -92,10 +92,35 @@ for turn in range(1, 7):  # max 6 turns
             print(f"{i+1} - {scored_guesses[i]}")
 
         ###  User Input store in guess and the pattern store in pattern
-        guess = input("Enter your guess:")
+        guess = input("Enter your guess:").lower()
+        if (guess not in guesses):
+            ErrorG=1
+            while(ErrorG):
+                guess = input("ERROR!!... Try Again !! \nEnter a valid guess:").lower()
+                if(guess in guesses):
+                    ErrorG=0
 
-        pattern = input("Enter the given pattern:")
 
+        pattern = input("Enter the given pattern:").lower()
+        for char in pattern:
+            if (char not in ["g","r","y"]):
+                pattern_valid=0
+                break
+            pattern_valid=1
+
+        
+        if (len(pattern)!=5 or not pattern_valid ):
+            ErrorP=1
+            while(ErrorP):
+                pattern = input("ERROR!!... Try Again !! \nEnter a valid pattern:").lower()
+                for char in pattern:
+                    if (char  not in ["g","r","y"]):
+                        pattern_valid=0
+                        break
+                    pattern_valid=1
+
+                if(len(pattern)==5 and pattern_valid):
+                    ErrorP=0
 
 
         # handle the case of ggggg before filtering
