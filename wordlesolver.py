@@ -9,33 +9,28 @@ with open('targets_5_letter.json','r') as file:
 with open('dictionary_5_letter.json','r') as file2:
     guesses = json.load(file2)
 
-def identify_color(G,A,i):
-    
-    if(G[i]==A[i]):
-        A[i]='0'
-        G[i]=''
-        return 'g'
-    else:
-        for char in range(len(G)):
+def feedback(g,a):
+    G=list(g)
+    A=list(a)
+
+    fdbck=['r','r','r','r','r']
+
+    for char in range(len(G)):
+        if(G[char]==A[char]):
+            A[char]='0'
+            G[char]=''
+            fdbck[char]='g'
+
+    for i in range(len(G)):
+        for char in range(len(A)):
             if(char==i):
                 continue
             elif(G[i]==A[char]):
                 A[char]='0'
                 G[i]=''
-                return 'y'
+                fdbck[i]='y'
     
-    return 'r'
-
-
-
-def feedback(g,a):
-    G=list(g)
-    A=list(a)
-
-    fdbck=""
-    for char in range(len(G)):
-        fdbck+=identify_color(G,A,char)
-
+    fdbck="".join(fdbck)
     return fdbck
     
 
