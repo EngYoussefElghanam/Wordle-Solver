@@ -95,7 +95,7 @@ for turn in range(1, 7):  # max 6 turns
                 if(guess in guesses):
                     ErrorG=0
 
-
+        pattern_valid  = 0
         pattern = input("Enter the given pattern:").lower()
         for char in pattern:
             if (char not in ["g","r","y"]):
